@@ -8,14 +8,16 @@ description: >
 license: MIT
 metadata:
   author: groupzer0
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Caveman Compress
 
 ## Purpose
 
-Compress natural language files (CLAUDE.md, todos, preferences) into caveman-speak to reduce input tokens. Compressed version overwrites original. Human-readable backup saved as `<filename>.original.md`.
+Compress natural language files (CLAUDE.md, todos, preferences) into caveman-speak to reduce input tokens. Agent apply compression rules DIRECTLY — no Claude CLI, no API call, no `python -m scripts`. Compressed version overwrite original. Human-readable backup saved as `<filename>.original.md`.
+
+Intensity / voice reference: sibling skill `skills/caveman/SKILL.md` (full intensity default). Compression rule set below = standalone; caveman skill optional for tone examples only.
 
 ## Trigger
 
@@ -23,21 +25,21 @@ Compress natural language files (CLAUDE.md, todos, preferences) into caveman-spe
 
 ## Process
 
-1. The compression scripts live in `caveman-compress/scripts/` (adjacent to this SKILL.md). If the path is not immediately available, search for `caveman-compress/scripts/__main__.py`.
+Agent do these steps INLINE (read file → transform → write). Do NOT call Claude CLI. Do NOT run `python -m scripts` for compression.
 
-2. Run:
+1. **Resolve path.** Absolute or workspace-relative filepath from user.
+2. **Guardrails (abort, no write):**
+   - File missing / not a file → report, stop
+   - Name ends with `.original.md` → NEVER compress backups; report skip, stop
+   - Extension not natural-language → skip (see Boundaries)
+3. **Backup once:** If `FILE.original.md` does not exist, copy current file contents there. If backup already exists, leave it untouched (re-compress from current FILE, or user edits `.original.md` then copies back first).
+4. **Compress prose in place** using Compression Rules below. Preserve code/inline/URLs/paths/headings/structure EXACTLY.
+5. **Overwrite** original path with compressed result.
+6. **Return** to user: compressed path, backup path, rough before/after size if easy.
 
-cd caveman-compress && python3 -m scripts <absolute_filepath>
+### Optional legacy scripts
 
-3. The CLI will:
-- detect file type (no tokens)
-- call Claude to compress
-- validate output (no tokens)
-- if errors: cherry-pick fix with Claude (targeted fixes only, no recompression)
-- retry up to 2 times
-- if still failing after 2 retries: report error to user, leave original file untouched
-
-4. Return result to user
+`scripts/` = optional local validators / old Claude-backed pipeline. NOT required. Prefer agent-applied rules above. Scripts may help spot-check preservation (headings, fences) after manual compress — never treat them as the primary compress path.
 
 ## Compression Rules
 
@@ -113,3 +115,4 @@ Compressed:
 - If unsure whether something is code or prose, leave it unchanged
 - Original file is backed up as FILE.original.md before overwriting
 - Never compress FILE.original.md (skip it)
+- No network / no Claude CLI / no Anthropic API for this skill

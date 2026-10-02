@@ -1,31 +1,34 @@
 # Security
 
-## Snyk High Risk Rating
+## Primary path (current skill)
 
-`caveman-compress` receives a Snyk High Risk rating due to static analysis heuristics. This document explains what the skill does and does not do.
+`caveman-compress` instructs the agent to compress one user-named natural-language file in-process:
 
-### What triggers the rating
+- Read path user gave
+- Backup to `FILE.original.md` if missing
+- Rewrite prose only; preserve code / inline / URLs / paths / structure
+- Never touch `*.original.md` or non-prose types
 
-1. **subprocess usage**: The skill calls the `claude` CLI via `subprocess.run()` as a fallback when `ANTHROPIC_API_KEY` is not set. The subprocess call uses a fixed argument list — no shell interpolation occurs. User file content is passed via stdin, not as a shell argument.
+**Does not:**
 
-2. **File read/write**: The skill reads the file the user explicitly points it at, compresses it, and writes the result back to the same path. A `.original.md` backup is saved alongside it. No files outside the user-specified path are read or written.
+- Call Claude CLI or Anthropic API
+- Spawn subprocesses as part of the skill flow
+- Reach network
+- Execute file content as code
+- Read/write outside the user-specified path (+ sibling `.original.md` backup)
 
-### What the skill does NOT do
+## Legacy scripts/ (optional)
 
-- Does not execute user file content as code
-- Does not make network requests except to Anthropic's API (via SDK or CLI)
-- Does not access files outside the path the user provides
-- Does not use shell=True or string interpolation in subprocess calls
-- Does not collect or transmit any data beyond the file being compressed
+Folder `scripts/` holds an older Claude-backed CLI and local validators. Skill.md does **not** require them.
 
-### Auth behavior
+If you run legacy scripts yourself:
 
-If `ANTHROPIC_API_KEY` is set, the skill uses the Anthropic Python SDK directly (no subprocess). If not set, it falls back to the `claude` CLI, which uses the user's existing Claude desktop authentication.
+1. **subprocess**: older compress path may call `claude` CLI when `ANTHROPIC_API_KEY` unset — fixed argv list, content via stdin, no `shell=True`
+2. **File I/O**: only the filepath you pass (+ `.original.md` backup)
+3. **Size guard**: files >500KB rejected before any API use
 
-### File size limit
+Static analyzers (e.g. Snyk) may flag subprocess + file I/O in `scripts/` as high risk. For default agent-applied compression, those code paths stay unused.
 
-Files larger than 500KB are rejected before any API call is made.
+## Reporting a vulnerability
 
-### Reporting a vulnerability
-
-If you believe you've found a genuine security issue, please open a GitHub issue with the label `security`.
+Open a GitHub issue with label `security`.

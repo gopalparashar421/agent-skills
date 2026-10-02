@@ -10,9 +10,9 @@
 
 ---
 
-A Claude Code skill that compresses your project memory files (`CLAUDE.md`, todos, preferences) into caveman format — so every session loads fewer tokens automatically.
+Skill compress project memory files (`CLAUDE.md`, todos, preferences) into caveman format — fewer tokens each session load.
 
-Claude read `CLAUDE.md` on every session start. If file big, cost big. Caveman make file small. Cost go down forever.
+Agent apply compression rules from `SKILL.md` directly. No Claude CLI. No API key. No required Python pipeline.
 
 ## What It Do
 
@@ -21,15 +21,15 @@ Claude read `CLAUDE.md` on every session start. If file big, cost big. Caveman m
 ```
 
 ```
-CLAUDE.md          ← compressed (Claude reads this — fewer tokens every session)
+CLAUDE.md          ← compressed (agent reads this — fewer tokens every session)
 CLAUDE.original.md ← human-readable backup (you edit this)
 ```
 
-Original never lost. You can read and edit `.original.md`. Run skill again to re-compress after edits.
+Original never lost. Edit `.original.md` when needed. Re-run skill to re-compress after edits.
 
 ## Benchmarks
 
-Real results on real project files:
+Historical results (when Claude-backed pipeline existed) on real project files:
 
 | File | Original | Compressed | Saved |
 |------|----------:|----------:|------:|
@@ -40,7 +40,7 @@ Real results on real project files:
 | `mixed-with-code.md` | 888 | 560 | **36.9%** |
 | **Average** | **898** | **481** | **46%** |
 
-All validations passed ✅ — headings, code blocks, URLs, file paths preserved exactly.
+Target still: headings, code blocks, URLs, file paths preserved exactly.
 
 ## Before / After
 
@@ -48,14 +48,14 @@ All validations passed ✅ — headings, code blocks, URLs, file paths preserved
 <tr>
 <td width="50%">
 
-### 📄 Original (706 tokens)
+### Original (706 tokens)
 
 > "I strongly prefer TypeScript with strict mode enabled for all new code. Please don't use `any` type unless there's genuinely no way around it, and if you do, leave a comment explaining the reasoning. I find that taking the time to properly type things catches a lot of bugs before they ever make it to runtime."
 
 </td>
 <td width="50%">
 
-### 🪨 Caveman (285 tokens)
+### Caveman (285 tokens)
 
 > "Prefer TypeScript strict mode always. No `any` unless unavoidable — comment why if used. Proper types catch bugs early."
 
@@ -63,23 +63,17 @@ All validations passed ✅ — headings, code blocks, URLs, file paths preserved
 </tr>
 </table>
 
-**Same instructions. 60% fewer tokens. Every. Single. Session.**
+**Same instructions. ~60% fewer tokens. Every session.**
 
 ## Security
 
-`caveman-compress` is flagged as Snyk High Risk due to subprocess and file I/O patterns detected by static analysis. This is a false positive — see [SECURITY.md](./SECURITY.md) for a full explanation of what the skill does and does not do.
+Primary path = agent edits one user-named file in-process. No subprocess, no network. See [SECURITY.md](./SECURITY.md).
+
+Legacy `scripts/` (optional validators / old Claude pipeline) may still trip static-analysis false positives if scanned — unused by default skill flow.
 
 ## Install
 
-Compress is built in with the `caveman` plugin. Install `caveman` once, then use `/caveman:compress`.
-
-If you need local files, the compress skill lives at:
-
-```bash
-caveman-compress/
-```
-
-**Requires:** Python 3.10+
+Part of this agent-skills repo. After install, invoke `/caveman:compress` or ask agent to compress a memory file.
 
 ## Usage
 
@@ -98,39 +92,33 @@ Examples:
 
 | Type | Compress? |
 |------|-----------|
-| `.md`, `.txt`, `.rst` | ✅ Yes |
-| Extensionless natural language | ✅ Yes |
-| `.py`, `.js`, `.ts`, `.json`, `.yaml` | ❌ Skip (code/config) |
-| `*.original.md` | ❌ Skip (backup files) |
+| `.md`, `.txt`, `.rst` | Yes |
+| Extensionless natural language | Yes |
+| `.py`, `.js`, `.ts`, `.json`, `.yaml` | Skip (code/config) |
+| `*.original.md` | Skip (backup files) |
 
 ## How It Work
 
 ```
 /caveman:compress CLAUDE.md
         ↓
-detect file type        (no tokens)
+guard: type + never *.original.md
         ↓
-Claude compresses       (tokens — one call)
+backup → CLAUDE.original.md (if missing)
         ↓
-validate output         (no tokens)
-  checks: headings, code blocks, URLs, file paths, bullets
+agent compress prose per SKILL.md rules
+  (code/inline/URLs/paths/headings untouched)
         ↓
-if errors: Claude fixes cherry-picked issues only   (tokens — targeted fix)
-  does NOT recompress — only patches broken parts
-        ↓
-retry up to 2 times
-        ↓
-write compressed → CLAUDE.md
-write original   → CLAUDE.original.md
+overwrite CLAUDE.md
 ```
 
-Only two things use tokens: initial compression + targeted fix if validation fails. Everything else is local Python.
+Optional: run legacy `scripts/` validators afterward for preservation checks. Not required.
 
 ## What Is Preserved
 
-Caveman compress natural language. It never touch:
+Caveman compress natural language. Never touch:
 
-- Code blocks (` ``` ` fenced or indented)
+- Code blocks (fenced or indented)
 - Inline code (`` `backtick content` ``)
 - URLs and links
 - File paths (`/src/components/...`)
@@ -142,22 +130,9 @@ Caveman compress natural language. It never touch:
 
 ## Why This Matter
 
-`CLAUDE.md` loads on **every session start**. A 1000-token project memory file costs tokens every single time you open a project. Over 100 sessions that's 100,000 tokens of overhead — just for context you already wrote.
-
-Caveman cut that by ~46% on average. Same instructions. Same accuracy. Less waste.
-
-```
-┌────────────────────────────────────────────┐
-│  TOKEN SAVINGS PER FILE    █████       46% │
-│  SESSIONS THAT BENEFIT     ██████████ 100% │
-│  INFORMATION PRESERVED     ██████████ 100% │
-│  SETUP TIME                █            1x │
-└────────────────────────────────────────────┘
-```
+Memory files load every session. Big file → repeated token tax. Caveman cut ~46% average historically. Same instructions. Less waste.
 
 ## Part of Caveman
 
-This skill is part of the [caveman](https://github.com/JuliusBrussee/caveman) toolkit — making Claude use fewer tokens without losing accuracy.
-
-- **caveman** — make Claude *speak* like caveman (cuts response tokens ~65%)
-- **caveman-compress** — make Claude *read* less (cuts context tokens ~46%)
+- **caveman** — speak like caveman (cut response tokens)
+- **caveman-compress** — read less (cut context tokens)
