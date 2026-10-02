@@ -38,10 +38,29 @@ Config: `.cursor/hooks.json`.
 
 ## Token-saving combinations
 
-1. **Intake → Plan → Critic** — `scope-intake` first; skip full plan if Stop/Reshape.
-2. **Self-learning on stop (once)** — `loop_limit: 1`; no-op if no reusable lesson.
-3. **Session blurb not full skills** — hooks inject pointers; agent loads skill only when needed.
-4. **Lifecycle + learning same follow-up** — one stop message, two checklists, one pass.
+1. **Scope route** (session blurb + skills):
+   - Tiny fix / typo → no plan skill; edit + test
+   - Fuzzy / greenfield → `scope-intake` (Planner+Critic early)
+   - Medium + clear → `plan-and-critique` (one pass; keep Planner/Critic agents for epics)
+   - Large epic → Planner agent → Critic agent (formal handoffs)
+2. **Intake → Plan → Critic** — skip full plan if Stop/Reshape.
+3. **Self-learning on stop (once)** — `loop_limit: 1`; no-op if no reusable lesson.
+4. **Session blurb not full skills** — hooks inject pointers; agent loads skill only when needed.
+5. **Lifecycle + learning same follow-up** — one stop message, two checklists, one pass.
+
+### Cursor hook events (cheat sheet)
+
+| Event | Use here |
+|-------|----------|
+| `sessionStart` | Methodology + scope-route blurb |
+| `afterFileEdit` | Marker when `agent-output/implementation/**` changes |
+| `stop` | Self-learning + lifecycle follow-up (`loop_limit: 1`) |
+| `beforeShellExecution` | Soft TDD reminder on commit/publish |
+| `subagentStop` | Future: Implementer→QA handoff nudge |
+| `preCompact` | Future: remind caveman-compress on memory files |
+| `beforeSubmitPrompt` | Avoid for scope-routing (noisy); prefer session blurb + skills |
+
+Full agent events also include: `sessionEnd`, `preToolUse`, `postToolUse`, `subagentStart`, `afterShellExecution`, `beforeMCPExecution`, `afterMCPExecution`, `beforeReadFile`, `afterAgentResponse`, `afterAgentThought`, Tab events.
 
 ## Add a hook
 
@@ -57,7 +76,8 @@ Follow Cursor create-hook skill:
 ## Skills tied to hooks
 
 - `self-learning` — post-impl capture
-- `document-lifecycle` — status / close / orphans
-- `scope-intake` — early Planner+Critic merge
+- `document-lifecycle` — status / close / orphans + Implementer Completion checklist
+- `scope-intake` — early Planner+Critic merge (fuzzy scope)
+- `plan-and-critique` — medium clear scope; one-pass plan+stress-test
 - `testing-patterns` — TDD gate content
 - `caveman-compress` — optional preCompact / memory hygiene (agent-applied; no Claude CLI)

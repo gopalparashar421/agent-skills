@@ -1,1 +1,2 @@
 *.pyc
+.cursor/hooks/state/

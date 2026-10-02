@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "python .cursor/hooks/session-start.py"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "python .cursor/hooks/mark-implementation-edit.py"
+      }
+    ],
+    "stop": [
+      {
+        "command": "python .cursor/hooks/self-learning-stop.py",
+        "loop_limit": 1
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "python .cursor/hooks/tdd-gate-reminder.py"
+      }
+    ]
+  }
+}
