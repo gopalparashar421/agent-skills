@@ -1,10 +1,13 @@
 ---
 name: document-lifecycle
-description: Unified document lifecycle. Terminal statuses, numbering via .next-id, close procedures, orphan detection. Load at session start.
+description: >
+  Unified document lifecycle. Terminal statuses, numbering via .next-id, close procedures,
+  orphan detection, and Implementer-completion status/changelog updates for agent-output/.
+  Load at session start or when impl finishes / close procedure needed.
 license: MIT
 metadata:
   author: groupzer0
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Document Lifecycle Skill
@@ -71,6 +74,21 @@ Status: Active             # Current lifecycle state
 | Planner creates plan from user request (no analysis) | Read `.next-id`, increment, use as ID, write back |
 | Implementer/QA/UAT/Critic work on plan | Inherit ID/Origin from plan doc |
 | Retrospective reviews plan | Inherit ID/Origin from plan doc |
+
+---
+
+## Implementer Completion (auto / hook)
+
+When Implementer finishes a work package (code+tests per plan), update `agent-output/` **before** QA handoff:
+
+1. **Impl doc** (`agent-output/implementation/NNN-*.md`): set Status to reflect done-for-impl (e.g. `Implemented` / `Ready for QA` — not a terminal close status). Add changelog row with paths touched + date.
+2. **Plan doc** (same ID): changelog note that impl landed; Status stay non-terminal until DevOps commit/release close.
+3. **Cross-refs**: ensure plan ↔ impl links valid; no broken relative paths.
+4. **Do not** move to `closed/` on Implementer complete — closure still DevOps/`Committed`/`Released` (or user Abandoned/Deferred).
+5. **Do not** edit `agent-output/qa/` (Implementer read-only there).
+6. Hook path: edit under `agent-output/implementation/` → marker → `stop` follow-up runs `self-learning` + this checklist. Manual: "update document-lifecycle for impl NNN".
+
+See also: `self-learning` skill (instruction/skills capture) vs this skill (status/paths/closure only).
 
 ---
 

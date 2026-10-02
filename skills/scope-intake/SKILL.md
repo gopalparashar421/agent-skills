@@ -22,7 +22,16 @@ Single pass: understand scope + kill weak ideas early. Planner concerns + Critic
 - User wants "scope this", "intake", "is this sane before we plan"
 - Hook / session nudge when prompt looks like greenfield planning
 
-**Not a replacement** for full Critic review on finished plans. This = early filter.
+**Scope route (pick one):**
+
+| Signal | Load |
+|--------|------|
+| Typo / one-liner / obvious fix | No intake; just change + test |
+| Fuzzy / many unknowns | **This skill** (`scope-intake`) |
+| Medium + mostly clear | `plan-and-critique` |
+| Large epic / formal gates | Planner agent → Critic agent |
+
+**Not a replacement** for full Critic on finished plans. This = early filter.
 
 ## One-pass checklist
 

@@ -306,4 +306,10 @@ Status: Active
 
 **Self-check on start**: Before work, scan `agent-output/implementation/` for docs with terminal Status (Committed, Released, Abandoned, Deferred, Superseded) outside `closed/`. Move them to `closed/` first.
 
+**On completion** (before QA handoff):
+
+1. Update impl doc Status + changelog (paths touched). See `document-lifecycle` → Implementer Completion.
+2. Do **not** close/move to `closed/` — DevOps does that after commit.
+3. Run or expect `self-learning` skill (hook may auto-follow up after edits under `agent-output/implementation/`). Never edit `skills/caveman*`.
+
 **Closure**: DevOps closes your impl doc after successful commit.

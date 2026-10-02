@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """
-Caveman Memory Compression Orchestrator
+LEGACY Claude-backed compressor. Optional only.
 
-Usage:
+Prefer agent-applied rules in ../SKILL.md (no Claude CLI).
+This module kept for spot-checks / historical pipeline — not the skill default.
+
+Usage (legacy):
     python scripts/compress.py <filepath>
 """
 
