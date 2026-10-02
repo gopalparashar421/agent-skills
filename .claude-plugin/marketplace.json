@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "gopalparashar421-agent-skills",
+  "description": "Custom agents and Agent Skills for multi-agent planning lifecycle and token-efficient workflows.",
+  "owner": {
+    "name": "gopalparashar421",
+    "url": "https://github.com/gopalparashar421"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "version": "0.1.0",
+      "source": {
+        "source": "github",
+        "repo": "gopalparashar421/agent-skills"
+      },
+      "description": "Agents + skills: planner/implementer lifecycle, engineering standards, caveman compress/commit/review, self-learning hooks.",
+      "homepage": "https://github.com/gopalparashar421/agent-skills",
+      "license": "MIT",
+      "keywords": ["skills", "agents", "caveman", "lifecycle", "cursor", "hooks"]
+    }
+  ]
+}

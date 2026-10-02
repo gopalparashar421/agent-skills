@@ -1,0 +1,12 @@
+{
+  "name": "agent-skills",
+  "version": "0.1.0",
+  "description": "Custom agents and Agent Skills — multi-agent planning lifecycle, engineering standards, and caveman token-saving skills.",
+  "author": {
+    "name": "gopalparashar421"
+  },
+  "homepage": "https://github.com/gopalparashar421/agent-skills",
+  "repository": "https://github.com/gopalparashar421/agent-skills",
+  "license": "MIT",
+  "skills": "./skills"
+}
