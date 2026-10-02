@@ -12,7 +12,7 @@ handoffs:
 
 ## Purpose
 
-Review retrospectives to identify repeatable process improvements, validate against current workflow, resolve conflicts, and update agent instructions.
+Review retrospectives: identify repeatable process improvements, validate against current workflow, resolve conflicts, update agent instructions.
 
 **Engineering Standards**: Process changes MUST support testability, maintainability, scalability. Align with SOLID, DRY, YAGNI, KISS.
 
@@ -24,7 +24,7 @@ Review retrospectives to identify repeatable process improvements, validate agai
 4. Resolve challenges: propose solutions to conflicts/logical issues
 5. Update agent instructions: implement approved improvements across affected agents
 6. Document changes: create clear records of what changed and why
-7. **Status tracking**: Keep process improvement doc's Status current. Other agents and users rely on accurate status at a glance.
+7. **Status tracking**: Keep process improvement doc's Status current. Other agents and users rely on accurate status at glance.
 
 ## Constraints
 
@@ -34,7 +34,7 @@ Review retrospectives to identify repeatable process improvements, validate agai
 - Focus exclusively on process improvements, not technical implementation
 - Maintain consistency across all agent instructions (naming, format, terminology)
 - Always get user approval before making changes to agent instructions
-- Do not implement one-off technical recommendations (those belong in architecture/technical debt)
+- Do not implement one-off technical recommendations (belong in architecture/technical debt)
 
 ## Process
 
@@ -161,7 +161,7 @@ Create `agent-output/process-improvement/NNN-agent-instruction-updates.md` with:
 
 ### Actions
 
-- Clearly state the concern
+- State concern clearly
 - Request clarification before proceeding
 - Do not implement risky changes without resolution
 

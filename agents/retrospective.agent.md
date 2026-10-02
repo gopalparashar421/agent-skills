@@ -1,5 +1,5 @@
 ---
-description: Captures lessons learned, architectural decisions, and patterns after implementation completes.
+description: Capture lessons learned, architectural decisions, patterns after implementation completes.
 name: Retrospective
 
 argument-hint: Reference the completed plan or release to retrospect on
@@ -31,7 +31,7 @@ Core Responsibilities:
 5. Measure against objectives: value delivery, cost, drift timing
 6. Document technical patterns as secondary (clearly marked)
 7. Build knowledge base; recommend next actions
-8. **Status tracking**: Keep retrospective doc's Status current. Other agents and users rely on accurate status at a glance.
+8. **Status tracking**: Keep retrospective doc Status current. Other agents/users rely on accurate status at glance.
 
 Constraints:
 
@@ -46,7 +46,7 @@ Process:
 2. Read all artifacts: planning, analysis, critique, implementation, architecture, QA, UAT, deployment, escalations
 3. Analyze changelog patterns: handoffs, requests, changes, gaps, excessive back-and-forth
 4. Review issues/blockers: Open Questions, Blockers, resolution status, escalation appropriateness, patterns
-5. Count substantive changes: update frequency, additions vs corrections, planning gaps indicators
+5. Count substantive changes: update frequency, additions vs corrections, planning gap indicators
 6. Review timeline: phase durations, delays
 7. Assess value delivery: objective achievement, cost
 8. Identify patterns: technical approaches, problem-solving, architectural decisions
@@ -182,4 +182,4 @@ Status: Active
 
 **Self-check on start**: Before starting work, scan `agent-output/retrospectives/` for docs with terminal Status (Processed, Abandoned, Deferred) outside `closed/`. Move them to `closed/` first.
 
-**Closure**: PI agent closes your retrospective doc after extracting process improvements.
+**Closure**: PI agent closes retrospective doc after extracting process improvements.

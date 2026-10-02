@@ -1,6 +1,6 @@
 ---
 name: document-lifecycle
-description: Unified document lifecycle management. Defines terminal statuses, unified numbering via .next-id, close procedures, and orphan detection. Load at session start.
+description: Unified document lifecycle. Terminal statuses, numbering via .next-id, close procedures, orphan detection. Load at session start.
 license: MIT
 metadata:
   author: groupzer0
@@ -9,21 +9,21 @@ metadata:
 
 # Document Lifecycle Skill
 
-Manages document state transitions, unified numbering, and automated closure across all agent-output directories.
+Manage doc state transitions, unified numbering, automated closure across all agent-output dirs.
 
 ---
 
 ## Core Principle
 
-Every work chain shares a single ID. When Analyst creates analysis 080, the downstream plan, implementation, QA, UAT, and critique all use ID 080. This enables human traceability across the entire lifecycle.
+Every work chain shares one ID. Analyst creates analysis 080 → downstream plan, impl, QA, UAT, critique all use ID 080. Enables human traceability across lifecycle.
 
-Documents in terminal status belong in `closed/` subfolders. Active work stays visible; completed work is archived but accessible.
+Docs in terminal status belong in `closed/` subfolders. Active work stays visible; completed work archived but accessible.
 
 ---
 
 ## Terminal Statuses
 
-These statuses trigger document closure (move to `closed/`):
+These statuses trigger closure (move to `closed/`):
 
 | Status | Meaning | Closed By |
 |--------|---------|-----------|
@@ -45,13 +45,13 @@ Location: `agent-output/.next-id`
 Contents: Single integer (e.g., `081`)
 
 **Rules:**
-- Only **originating agents** (Analyst, Planner when no analysis) read and increment
-- Downstream agents **inherit** the ID from their source document
-- Never skip numbers; always use the next available
+- Only **originating agents** (Analyst, Planner when no analysis) read + increment
+- Downstream agents **inherit** ID from source doc
+- Never skip numbers; always use next available
 
 ### Document Header Format
 
-Every document in `agent-output/` MUST include:
+Every doc in `agent-output/` MUST include:
 
 ```yaml
 ---
@@ -76,9 +76,9 @@ Status: Active             # Current lifecycle state
 
 ## Close Procedure
 
-When a document reaches terminal status:
+When doc reaches terminal status:
 
-1. **Update Status field** to the terminal status
+1. **Update Status field** to terminal status
 2. **Add changelog entry**: `| YYYY-MM-DD | [Agent] | Document closed | Status: [status] |`
 3. **Create closed folder** if needed: `mkdir -p agent-output/<domain>/closed/`
 4. **Move file**: `mv agent-output/<domain>/NNN-name.md agent-output/<domain>/closed/`
@@ -86,7 +86,7 @@ When a document reaches terminal status:
 
 ### Cross-Reference Handling
 
-When referencing a closed document from another document, use relative paths:
+When referencing closed doc from another doc, use relative paths:
 - From active doc: `../closed/080-feature.md`
 - From closed doc to closed doc: `./080-feature.md` (same folder)
 
@@ -96,19 +96,19 @@ When referencing a closed document from another document, use relative paths:
 
 ### Agent Self-Check (Every Session Start)
 
-Before starting work, each agent MUST:
+Before work, each agent MUST:
 
-1. Scan their exclusive domain (e.g., `agent-output/qa/`) excluding `closed/`
-2. Identify any document with terminal Status
-3. Move orphaned documents to `closed/`
+1. Scan exclusive domain (e.g., `agent-output/qa/`) excluding `closed/`
+2. Identify any doc with terminal Status
+3. Move orphaned docs to `closed/`
 4. Log: "Found orphaned document [name] with Status [status], moved to closed/"
 
 ### Roadmap Periodic Sweep
 
-Roadmap agent performs comprehensive sweep when reviewing roadmap:
+Roadmap agent runs full sweep when reviewing roadmap:
 
-1. Scan ALL `agent-output/*/` directories (excluding `closed/`)
-2. Flag documents with terminal Status not in `closed/`
+1. Scan ALL `agent-output/*/` dirs (excluding `closed/`)
+2. Flag docs with terminal Status not in `closed/`
 3. Report to user
 4. Move to respective `closed/` folders
 

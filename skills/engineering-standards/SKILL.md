@@ -9,7 +9,7 @@ metadata:
 
 # Engineering Standards
 
-Foundational principles for high-quality software. Use this skill when:
+Foundational principles for high-quality software. Use when:
 - Reviewing code for quality issues
 - Planning architectural changes
 - Identifying refactoring opportunities
@@ -18,24 +18,24 @@ Foundational principles for high-quality software. Use this skill when:
 ## SOLID Principles
 
 ### Single Responsibility (SRP)
-A class/module should have one reason to change.
+Class/module → one reason to change.
 
 **Detection patterns:**
-- Class with 5+ public methods doing unrelated things
-- Method longer than 50 lines
-- Class name contains "And" or "Manager" with mixed concerns
+- Class w/ 5+ public methods doing unrelated things
+- Method >50 lines
+- Class name contains "And" or "Manager" w/ mixed concerns
 - File imports from 10+ unrelated modules
 
 **Refactoring:**
-- Extract class for each responsibility
+- Extract class per responsibility
 - Split into focused modules
-- Use composition over inheritance
+- Composition over inheritance
 
 ### Open/Closed (OCP)
 Open for extension, closed for modification.
 
 **Detection patterns:**
-- Switch/case on type with frequent additions
+- Switch/case on type w/ frequent additions
 - if/else chains checking instance types
 - Modifying existing code to add new features
 
@@ -45,29 +45,29 @@ Open for extension, closed for modification.
 - Dependency injection for configurability
 
 ### Liskov Substitution (LSP)
-Subtypes must be substitutable for their base types.
+Subtypes must be substitutable for base types.
 
 **Detection patterns:**
 - Override that throws "not implemented"
-- Subclass that ignores parent behavior
+- Subclass ignores parent behavior
 - Type checks before calling inherited methods
 
 **Refactoring:**
 - Favor composition over inheritance
 - Extract interface for true polymorphism
-- Use abstract base with required overrides
+- Abstract base w/ required overrides
 
 ### Interface Segregation (ISP)
-Clients shouldn't depend on methods they don't use.
+Clients shouldn't depend on unused methods.
 
 **Detection patterns:**
-- Interface with 10+ methods
-- Implementing classes that stub methods as no-ops
-- "Fat" interfaces with unrelated method groups
+- Interface w/ 10+ methods
+- Implementing classes stub methods as no-ops
+- "Fat" interfaces w/ unrelated method groups
 
 **Refactoring:**
 - Split into role-specific interfaces
-- Use mixins/traits for optional behaviors
+- Mixins/traits for optional behaviors
 - Compose multiple focused interfaces
 
 ### Dependency Inversion (DIP)
@@ -89,7 +89,7 @@ Depend on abstractions, not concretions.
 
 **Detection patterns:**
 - Copy-pasted code blocks (3+ occurrences)
-- Similar functions with minor variations
+- Similar functions w/ minor variations
 - Duplicated validation logic
 - Repeated configuration values
 
@@ -97,7 +97,7 @@ Depend on abstractions, not concretions.
 - Extract shared function/class
 - Parameterize variations
 - Create configuration constants
-- Use template method pattern
+- Template method pattern
 
 **Exceptions (acceptable duplication):**
 - Test code clarity (explicit over DRY)
@@ -110,7 +110,7 @@ Depend on abstractions, not concretions.
 
 **Detection patterns:**
 - Unused parameters "for future use"
-- Abstract classes with single implementation
+- Abstract classes w/ single implementation
 - Configuration options never used
 - Speculative generalization
 
@@ -133,7 +133,7 @@ Depend on abstractions, not concretions.
 **Refactoring:**
 - Flatten control flow
 - Extract named functions
-- Use early returns
+- Early returns
 - Choose boring technology
 
 ---
@@ -162,7 +162,7 @@ Depend on abstractions, not concretions.
 - KISS for all code
 
 **Apply with judgment:**
-- OCP when extension points are clear
+- OCP when extension points clear
 - ISP when interfaces grow beyond 5 methods
 - DIP at module boundaries
 

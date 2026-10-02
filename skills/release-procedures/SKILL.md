@@ -9,8 +9,8 @@ metadata:
 
 # Release Procedures
 
-Systematic approach to packaging and releasing software. Use this skill when:
-- DevOps prepares a release for deployment
+Package + release software. Use when:
+- DevOps prepares release for deployment
 - Implementer updates version files during milestones
 - Planner specifies version bumps in plans
 
@@ -77,7 +77,7 @@ Systematic approach to packaging and releasing software. Use this skill when:
 
 ## Version Consistency Checklist
 
-All version references must match before release:
+All version refs must match before release:
 
 | File | Field | Example |
 |------|-------|---------|
@@ -238,10 +238,10 @@ git push origin v1.2.3
 ## Agent Responsibilities
 
 ### DevOps Agent (Two-Stage Release)
-- **Stage 1 (Per-Plan)**: After UAT approval, commit changes locally with detailed message. Do NOT push.
-- **Stage 2 (Per-Release)**: After all plans committed and user approves release, push and publish.
-- Track which plans are committed for current release
-- Coordinate with Roadmap agent to maintain release→plan mappings
+- **Stage 1 (Per-Plan)**: After UAT approval, commit locally w/ detailed message. Do NOT push.
+- **Stage 2 (Per-Release)**: After all plans committed + user approves, push and publish.
+- Track which plans committed for current release
+- Coordinate w/ Roadmap agent → maintain release→plan mappings
 - Never push without explicit release approval
 - Document in `agent-output/deployment/`
 
@@ -253,15 +253,15 @@ git push origin v1.2.3
 
 ### Planner Agent
 - Specify target release version in plan header
-- Multiple plans may share the same target release
-- Coordinate with Roadmap agent for release assignments
+- Multiple plans may share same target release
+- Coordinate w/ Roadmap agent for release assignments
 - Include version update in final milestone
 
 ### Roadmap Agent
 - Maintain Active Release Tracker section
 - Track current working release version
 - Monitor plan→release mappings
-- Notify when all plans for a release are committed
+- Notify when all plans for release committed
 
 ---
 

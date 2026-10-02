@@ -9,9 +9,9 @@ metadata:
 
 # Code Review Standards
 
-Systematic approach to code review. Use this skill when:
+Systematic code review approach. Use when:
 - Performing code reviews
-- Defining review criteria for a project
+- Defining review criteria for project
 - Understanding severity levels for findings
 - Creating code review documents
 
@@ -19,16 +19,16 @@ Systematic approach to code review. Use this skill when:
 
 ## Review Focus Areas
 
-Use this checklist when reviewing implementation code:
+Checklist for reviewing implementation code:
 
 | Category | What to Review |
 |----------|----------------|
-| **Architecture Alignment** | Does implementation match Architect's design? Follows system-architecture.md patterns? |
+| **Architecture Alignment** | Implementation match Architect's design? Follows system-architecture.md patterns? |
 | **SOLID Principles** | SRP, OCP, LSP, ISP, DIP violations (load `engineering-standards` for detection patterns) |
 | **DRY/YAGNI/KISS** | Duplication, speculative generalization, over-complexity |
 | **TDD Compliance** | TDD Compliance table present in implementation doc? All rows show test-first? |
 | **Code Smells** | Long Method, Large Class, Feature Envy, etc. (see `engineering-standards`) |
-| **Documentation & Comments** | Appropriate inline comments explaining "why" (not "what"), function docstrings, module-level docs, complex logic explained |
+| **Documentation & Comments** | Inline comments explain "why" (not "what"), function docstrings, module-level docs, complex logic explained |
 | **Naming & Clarity** | Self-documenting names, appropriate abstractions, readable code |
 | **Error Handling** | Defensive coding, graceful failures, appropriate exceptions |
 | **Security Quick Scan** | Obvious vulnerabilities (injection, exposed secrets, hardcoded creds) |
@@ -43,7 +43,7 @@ Use this checklist when reviewing implementation code:
 |----------|------------|--------|
 | **CRITICAL** | Security vulnerability, data loss risk, architectural violation | REJECT - must fix |
 | **HIGH** | Anti-pattern, significant maintainability issue, missing tests | REJECT - must fix |
-| **MEDIUM** | Code smell, minor design issue, unclear code | Fix recommended, may approve with comments |
+| **MEDIUM** | Code smell, minor design issue, unclear code | Fix recommended, may approve w/ comments |
 | **LOW** | Style preference, minor optimization opportunity | Note for future, approve |
 | **INFO** | Observation, suggestion for improvement | FYI only |
 
@@ -58,7 +58,7 @@ Use this checklist when reviewing implementation code:
 
 ## Finding Format
 
-When documenting findings, use this format:
+Document findings:
 
 ```markdown
 **[SEVERITY] [Category]**: [Brief title]
@@ -145,9 +145,9 @@ Create in `agent-output/code-review/` matching plan name:
 
 ## Review Best Practices
 
-1. **Be constructive**: Explain WHY something is an issue, not just THAT it's an issue
+1. **Be constructive**: Explain WHY issue, not just THAT issue
 2. **Be specific**: File paths, line numbers, code snippets
 3. **Provide solutions**: Concrete fix suggestions, not just criticism
-4. **Acknowledge good work**: Note positive patterns when you see them
-5. **Prioritize**: Focus on impactful issues, not nitpicks
-6. **Context matters**: Consider the plan's constraints and timeline
+4. **Acknowledge good work**: Note positive patterns when seen
+5. **Prioritize**: Focus impactful issues, not nitpicks
+6. **Context matters**: Consider plan constraints + timeline

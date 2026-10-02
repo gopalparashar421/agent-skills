@@ -9,7 +9,7 @@ metadata:
 
 # Architecture Patterns
 
-Reference for architectural design and documentation. Use this skill when:
+Architectural design + documentation reference. Use when:
 - Architect reviews system design
 - Planner considers architectural constraints
 - Analyst investigates integration approaches
@@ -19,7 +19,7 @@ Reference for architectural design and documentation. Use this skill when:
 
 ### ADR Format
 
-Every significant architectural decision should be documented:
+Document every significant architectural decision:
 
 ```markdown
 # ADR-[NNN]: [Decision Title]
@@ -112,7 +112,7 @@ class PostgresUserRepository implements UserRepository {
 ```
 
 **Use when:** 
-- Need to swap data stores
+- Need swap data stores
 - Testing without real database
 - Multiple data sources
 
@@ -193,7 +193,7 @@ new OrderService(new MockDatabase());
 
 | Anti-Pattern | Detection | Fix |
 |--------------|-----------|-----|
-| **God Object** | Class with 20+ methods, 500+ lines | Extract classes |
+| **God Object** | Class w/ 20+ methods, 500+ lines | Extract classes |
 | **Circular Dependencies** | A→B→C→A | Introduce interface |
 | **Big Ball of Mud** | No clear structure | Define boundaries |
 | **Spaghetti Code** | Tangled control flow | Refactor, add layers |
@@ -223,7 +223,7 @@ grep -c "^import" src/**/*.ts | sort -t: -k2 -rn | head -10
 
 For `system-architecture.md`:
 
-1. **Purpose**: What does this system do?
+1. **Purpose**: What system does?
 2. **High-Level Architecture**: Diagram, major components
 3. **Components**: Each component's responsibility
 4. **Data Flow**: How data moves through system
@@ -264,7 +264,7 @@ graph TB
 
 ## Reconciliation Changelog Template
 
-When the Architect reconciles architecture docs after implementations, use this format in the `system-architecture.md` changelog:
+When Architect reconciles architecture docs after implementations, use format in `system-architecture.md` changelog:
 
 ```markdown
 | Date | Change | Rationale | Source |
@@ -276,15 +276,15 @@ When the Architect reconciles architecture docs after implementations, use this 
 
 **Reconciliation Entry Format:**
 - **Date**: When reconciliation occurred
-- **Change**: What was updated in architecture docs
+- **Change**: What updated in architecture docs
 - **Rationale**: "Reconciled from Plan-NNN" or "Post-implementation audit" or "Health audit discovery"
-- **Source**: Reference to plan, implementation, or audit that triggered reconciliation
+- **Source**: Plan / implementation / audit that triggered reconciliation
 
 ---
 
 ## Design Debt Registry Template
 
-Track architectural improvements in the **Problem Areas** section of `system-architecture.md`:
+Track architectural improvements in **Problem Areas** section of `system-architecture.md`:
 
 ```markdown
 ## Problem Areas / Design Debt Registry
@@ -309,12 +309,12 @@ Track architectural improvements in the **Problem Areas** section of `system-arc
 - **Current State**: What exists now (brief)
 - **Optimal State**: What would be better (brief)
 - **Priority**: Critical / High / Medium / Low
-- **Discovered**: When architect identified the debt
+- **Discovered**: When architect identified debt
 - **Last Reviewed**: When last evaluated (may affect priority)
 
 **Priority Guidelines:**
-- **Critical**: Blocking other improvements or causing active issues
-- **High**: Should address in next 1-2 releases
+- **Critical**: Blocks other improvements or causes active issues
+- **High**: Address in next 1-2 releases
 - **Medium**: Address when touching related code
 - **Low**: Nice-to-have, address opportunistically
 

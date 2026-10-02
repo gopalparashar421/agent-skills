@@ -1,12 +1,12 @@
 # Close Procedure Reference
 
-Step-by-step procedure for closing a document when it reaches terminal status.
+Step-by-step: close doc when it reaches terminal status.
 
 ---
 
 ## Prerequisites
 
-- Document has reached a terminal status:
+- Doc reached terminal status:
   - `Committed` - Changes committed to git
   - `Released` - Successfully pushed/published
   - `Abandoned` - Explicitly dropped
@@ -20,7 +20,7 @@ Step-by-step procedure for closing a document when it reaches terminal status.
 
 ### Step 1: Update Status Field
 
-In the document's YAML frontmatter, update the Status:
+In doc YAML frontmatter, update Status:
 
 ```yaml
 ---
@@ -33,7 +33,7 @@ Status: Committed    # ← Updated to terminal status
 
 ### Step 2: Add Changelog Entry
 
-Add a closure entry to the document's changelog table:
+Add closure entry to doc changelog table:
 
 ```markdown
 | YYYY-MM-DD | [Your Agent Name] | Document closed | Status: Committed |
@@ -45,7 +45,7 @@ Add a closure entry to the document's changelog table:
 mkdir -p agent-output/<domain>/closed/
 ```
 
-Replace `<domain>` with the appropriate folder:
+Replace `<domain>` with appropriate folder:
 - `planning`, `implementation`, `qa`, `uat`, `critiques`
 - `analysis`, `retrospectives`, `process-improvement`
 - `deployment`, `security`, `architecture`
@@ -58,7 +58,7 @@ mv agent-output/<domain>/NNN-name.md agent-output/<domain>/closed/
 
 ### Step 5: Log the Action
 
-Report in your response:
+Report in response:
 
 > Closed document `080-feature-name.md` (Status: Committed) → moved to `agent-output/planning/closed/`
 
@@ -66,7 +66,7 @@ Report in your response:
 
 ## Bulk Closure (DevOps After Commit)
 
-When committing a plan, close all related documents:
+When committing plan, close all related docs:
 
 ```bash
 # For each document type in the chain
@@ -84,7 +84,7 @@ Report:
 
 ## Cross-Reference Updates
 
-If other active documents reference the now-closed document, update the path:
+If other active docs reference now-closed doc, update path:
 
 **Before:**
 ```markdown
@@ -96,4 +96,4 @@ See [plan](../planning/080-feature.md)
 See [plan](../planning/closed/080-feature.md)
 ```
 
-Note: This is optional for documents being closed together (they'll all be in `closed/`).
+Note: Optional for docs closed together (all land in `closed/`).

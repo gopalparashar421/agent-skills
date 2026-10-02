@@ -9,7 +9,7 @@ metadata:
 
 # Testing Patterns
 
-Systematic approach to effective testing. Use this skill when:
+Effective testing approach. Use when:
 - Writing or changing tests (load anti-patterns reference)
 - Designing test strategies for new features
 - Reviewing test coverage adequacy
@@ -38,7 +38,7 @@ Systematic approach to effective testing. Use this skill when:
 
 | Benefit | How TDD Delivers |
 |---------|------------------|
-| **Prevents over-mocking** | You see what test needs before mocking |
+| **Prevents over-mocking** | See what test needs before mocking |
 | **No test-only production code** | Minimal implementation = no extras |
 | **Tests real behavior** | Failing test proves it tests something real |
 | **Better design** | Testable code = loosely coupled code |
@@ -56,7 +56,7 @@ Systematic approach to effective testing. Use this skill when:
 ### TDD Violations
 
 **If implementation arrives without tests:**
-1. Reject with "TDD Required"
+1. Reject w/ "TDD Required"
 2. Specify which tests should exist
 3. Implementation writes tests first, then code
 
@@ -80,7 +80,7 @@ See [references/testing-anti-patterns.md](references/testing-anti-patterns.md) f
 **What:** Test single function/class in isolation
 **When:** All business logic, utilities, data transformations
 **Speed:** Milliseconds
-**Isolation:** Mock external dependencies (DB, network, filesystem)
+**Isolation:** Mock external deps (DB, network, filesystem)
 
 ```python
 # Good unit test
@@ -98,7 +98,7 @@ def test_order_discount():
 **What:** Test component interactions
 **When:** Database queries, API contracts, service boundaries
 **Speed:** Seconds
-**Isolation:** Real dependencies for component under test
+**Isolation:** Real deps for component under test
 
 ```python
 # Integration: tests DB interaction
@@ -149,7 +149,7 @@ def test_user_can_checkout():
 
 | Type | Target | Notes |
 |------|--------|-------|
-| Unit | 80%+ | Focus on logic, not coverage number |
+| Unit | 80%+ | Focus logic, not coverage number |
 | Integration | Critical paths | Don't test every permutation |
 | E2E | Happy paths only | 5-10 core scenarios |
 
@@ -209,11 +209,11 @@ def test_user_can_checkout():
 
 | Context | Mock What? | Reason |
 |---------|------------|--------|
-| Unit tests | External dependencies (DB, network, time) | Isolation + speed |
+| Unit tests | External deps (DB, network, time) | Isolation + speed |
 | Integration tests | External services only | Test real component interaction |
 | E2E tests | Nothing | Test real system |
 
-> ⚠️ **TDD prevents over-mocking**: If you write the test first and watch it fail, you know exactly what needs mocking.
+> ⚠️ **TDD prevents over-mocking**: Write test first + watch fail → know exactly what needs mocking.
 
 ### Mock vs Stub vs Spy
 
@@ -238,7 +238,7 @@ spy_logger = Mock(wraps=real_logger)
 
 ### The Iron Laws of Mocking
 
-1. **NEVER test mock behavior** — Use mocks to isolate your unit from dependencies, but assert on the unit's behavior, not the mock's existence. If your assertion is `expect(mockThing).toBeInTheDocument()`, you're testing the mock, not the code.
+1. **NEVER test mock behavior** — Mocks isolate unit from deps; assert on unit behavior, not mock existence. Assertion `expect(mockThing).toBeInTheDocument()` = testing mock, not code.
 2. **NEVER mock without understanding** — Know side effects before isolating
 3. **NEVER create incomplete mocks** — Mirror real API structure completely
 
@@ -246,7 +246,7 @@ spy_logger = Mock(wraps=real_logger)
 
 - Mock setup longer than test logic
 - Assertions on `*-mock` test IDs
-- Can't explain why mock is needed
+- Can't explain why mock needed
 - Mocking "just to be safe"
 
 **Full anti-pattern details**: [references/testing-anti-patterns.md](references/testing-anti-patterns.md)
@@ -257,12 +257,12 @@ spy_logger = Mock(wraps=real_logger)
 
 | Quality | Check |
 |---------|-------|
-| **Readable** | Can a new dev understand in 30 seconds? |
-| **Isolated** | Does it fail independently of other tests? |
-| **Fast** | Unit tests < 100ms, Integration < 5s? |
+| **Readable** | New dev understand in 30 seconds? |
+| **Isolated** | Fail independently of other tests? |
+| **Fast** | Unit < 100ms, Integration < 5s? |
 | **Deterministic** | Same result every run? |
 | **Focused** | One assertion per test (or logical group)? |
-| **Maintainable** | Will this break for wrong reasons? |
+| **Maintainable** | Break for wrong reasons? |
 
 ---
 
