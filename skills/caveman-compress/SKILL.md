@@ -37,10 +37,6 @@ Agent do these steps INLINE (read file → transform → write). Do NOT call Cla
 5. **Overwrite** original path with compressed result.
 6. **Return** to user: compressed path, backup path, rough before/after size if easy.
 
-### Optional legacy scripts
-
-`scripts/` = optional local validators / old Claude-backed pipeline. NOT required. Prefer agent-applied rules above. Scripts may help spot-check preservation (headings, fences) after manual compress — never treat them as the primary compress path.
-
 ## Compression Rules
 
 ### Remove

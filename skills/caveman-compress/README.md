@@ -27,19 +27,6 @@ CLAUDE.original.md ← human-readable backup (you edit this)
 
 Original never lost. Edit `.original.md` when needed. Re-run skill to re-compress after edits.
 
-## Benchmarks
-
-Historical results (when Claude-backed pipeline existed) on real project files:
-
-| File | Original | Compressed | Saved |
-|------|----------:|----------:|------:|
-| `claude-md-preferences.md` | 706 | 285 | **59.6%** |
-| `project-notes.md` | 1145 | 535 | **53.3%** |
-| `claude-md-project.md` | 1122 | 636 | **43.3%** |
-| `todo-list.md` | 627 | 388 | **38.1%** |
-| `mixed-with-code.md` | 888 | 560 | **36.9%** |
-| **Average** | **898** | **481** | **46%** |
-
 Target still: headings, code blocks, URLs, file paths preserved exactly.
 
 ## Before / After
@@ -68,8 +55,6 @@ Target still: headings, code blocks, URLs, file paths preserved exactly.
 ## Security
 
 Primary path = agent edits one user-named file in-process. No subprocess, no network. See [SECURITY.md](./SECURITY.md).
-
-Legacy `scripts/` (optional validators / old Claude pipeline) may still trip static-analysis false positives if scanned — unused by default skill flow.
 
 ## Install
 
@@ -111,8 +96,6 @@ agent compress prose per SKILL.md rules
         ↓
 overwrite CLAUDE.md
 ```
-
-Optional: run legacy `scripts/` validators afterward for preservation checks. Not required.
 
 ## What Is Preserved
 
