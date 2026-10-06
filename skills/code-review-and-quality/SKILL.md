@@ -11,6 +11,19 @@ Multi-dimensional code review with quality gates. Every change gets reviewed bef
 
 **The approval standard:** Approve a change when it definitely improves overall code health, even if it isn't perfect. Perfect code doesn't exist — the goal is continuous improvement. Don't block a change because it isn't exactly how you would have written it. If it improves the codebase and follows the project's conventions, approve it.
 
+## Skill hooks
+
+| When | Next |
+|------|------|
+| Upstream | `implementer` complete (replaces deleted code-reviewer persona) |
+| Parallel | `qa` for test strategy/execution |
+| Complexity / clarity only | `code-simplification` |
+| Perf findings | `performance-optimization` |
+| Terse PR comments | `caveman-review` |
+| After approve | user manual review + commit; `document-lifecycle` close |
+
+Pre-implementation plan review is **`critic`** / `plan-and-critique` — not this skill.
+
 ## When to Use
 
 - Before merging any PR or change
@@ -63,7 +76,7 @@ Does the change fit the system's design?
 
 ### 4. Security
 
-For detailed security guidance, see `security-and-hardening`. Does the change introduce vulnerabilities?
+Does the change introduce vulnerabilities?
 
 - Is user input validated and sanitized?
 - Are secrets kept out of code, logs, and version control?
@@ -299,7 +312,7 @@ Part of code review is dependency review:
 4. **Mind the transitive graph.** Most installed packages are ones nobody chose directly. Review the lockfile diff, not just `package.json`; a single direct bump can pull in dozens of indirect changes.
 5. **Keep the lockfile honest.** Commit it, review its diff, and never hand-edit it. The lockfile is the thing that actually pins what ships.
 
-For triaging `npm audit` findings and supply-chain risk (typosquatting, compromised maintainers), follow the `security-and-hardening` skill — this section covers the upgrade *workflow*, that one covers the security verdict.
+For `npm audit` / supply-chain risk: treat CRITICAL/HIGH vulns in changed deps as review blockers; document accept-risk decisions explicitly in the review note.
 
 ## The Review Checklist
 
