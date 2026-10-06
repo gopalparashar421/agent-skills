@@ -1,17 +1,17 @@
 # Hooks methodology
 
-Cursor hooks wire this repo multi-agent flow. Caveman prose. Skills hold deep process; hooks nudge / gate / follow up.
+Cursor hooks wire this repo skills flow. Skills hold deep process; hooks nudge / gate / follow up.
 
-Inspiration layout patterns: [addyosmani/agent-skills docs](https://github.com/addyosmani/agent-skills/tree/main/docs).
+Inspiration: [addyosmani/agent-skills docs](https://github.com/addyosmani/agent-skills/tree/main/docs).
 
 ## Implemented now
 
 | Hook event | Script | What fire | Why |
 |------------|--------|-----------|-----|
-| `sessionStart` | `.cursor/hooks/session-start.py` | Inject methodology blurb (lifecycle, scope-intake, self-learning) | Cheap shared context; cut "forgot the process" tokens |
-| `afterFileEdit` | `.cursor/hooks/mark-implementation-edit.py` | If path under `agent-output/implementation/` → write marker | Best proxy for "Implementer touched docs" |
-| `stop` | `.cursor/hooks/self-learning-stop.py` (`loop_limit: 1`) | On completed + marker → `followup_message` run `self-learning` + lifecycle touch | Auto learn without perfect "impl done" event |
-| `beforeShellExecution` | `.cursor/hooks/tdd-gate-reminder.py` | Soft `agent_message` on commit/publish-ish commands | TDD reminder; fail-open allow |
+| `sessionStart` | `.cursor/hooks/session-start.py` | Inject methodology blurb (entrypoint, lifecycle, self-learning) | Cheap shared context |
+| `afterFileEdit` | `.cursor/hooks/mark-implementation-edit.py` | If path under `agent-output/implementation/` → write marker | Proxy for "implementer touched docs" |
+| `stop` | `.cursor/hooks/self-learning-stop.py` (`loop_limit: 1`) | On completed + marker → run `self-learning` + lifecycle touch | Auto learn without perfect "impl done" event |
+| `beforeShellExecution` | `.cursor/hooks/tdd-gate-reminder.py` | Soft reminder on commit/publish-ish commands | TDD nudge; fail-open |
 
 Config: `.cursor/hooks.json`.
 
@@ -19,65 +19,37 @@ Config: `.cursor/hooks.json`.
 
 - Self-learning: `/self-learning` or "run self-learning skill"
 - Lifecycle close: load `document-lifecycle` / `references/close-procedure.md`
-- Scope intake: load `scope-intake` before full plan
+- Entrypoint: load `scope-intake` before planning
 
-**Limit:** Cursor no exact "Implementer agent finished" event. Marker + stop = best available. False positives possible if someone edits impl notes mid-spike — skill must stay conservative (no-op OK).
-
-## Proposed (skill-level or future hooks)
-
-| Idea | Level | Event / trigger | Notes |
-|------|-------|-----------------|-------|
-| Scope intake (Planner+Critic early) | **Skill** `scope-intake` + session blurb | User / Planner start | Token saver; not block-prompt |
-| Doc lifecycle on Implementer complete | **Skill** + stop follow-up text | Same stop as self-learning | Status/changelog/cross-refs |
-| Orphan sweep | Prompt / Roadmap / `sessionStart` remind | Session / roadmap review | Move terminal-status docs → `closed/` |
-| Security gate | `beforeShellExecution` or pre-PR skill | `gh pr create`, deploy | Ask on risky; pair `security` agent |
-| QA handoff | `subagentStop` / handoff text | Implementer → QA | Ensure QA doc exists; Implementer never edit `qa/` |
-| Close after DevOps commit | `afterShellExecution` on `git commit` + devops | DevOps | Run close-procedure for chain ID |
-| Critic after plan write | `afterFileEdit` on `agent-output/planning/` | Marker + stop | Optional; easy to annoy — prefer handoff |
-| Pre-compact memory | `preCompact` | Context full | Reminder: compress memory via caveman-compress |
+**Limit:** Cursor has no exact "implementer finished" event. Marker + stop = best available. Skills stay conservative (no-op OK).
 
 ## Token-saving combinations
 
-1. **Scope route** (session blurb + skills):
-   - Tiny fix / typo → no plan skill; edit + test
-   - Fuzzy / greenfield → `scope-intake` (Planner+Critic early)
-   - Medium + clear → `plan-and-critique` (one pass; keep Planner/Critic agents for epics)
-   - Large epic → Planner agent → Critic agent (formal handoffs)
-2. **Intake → Plan → Critic** — skip full plan if Stop/Reshape.
-3. **Self-learning on stop (once)** — `loop_limit: 1`; no-op if no reusable lesson.
-4. **Session blurb not full skills** — hooks inject pointers; agent loads skill only when needed.
-5. **Lifecycle + learning same follow-up** — one stop message, two checklists, one pass.
+1. **Entrypoint route** (`scope-intake` + session blurb):
+   - Tiny fix → skip plan skills; edit + test
+   - Underspecified → `interview-me` → confirmed intent
+   - Wide idea → suggest `idea-refine`
+   - Medium + clear → `plan-and-critique`
+   - Large epic → `roadmap` → `planner` → `critic`
+2. **Intake → plan** — skip full plan if Stop/Reshape.
+3. **Self-learning on stop (once)** — `loop_limit: 1`.
+4. **Session blurb not full skills** — hooks inject pointers; agent loads skill when needed.
+5. **Lifecycle + learning same follow-up** — one stop message, two checklists.
 
-### Cursor hook events (cheat sheet)
+## Skills tied to hooks
 
-| Event | Use here |
-|-------|----------|
-| `sessionStart` | Methodology + scope-route blurb |
-| `afterFileEdit` | Marker when `agent-output/implementation/**` changes |
-| `stop` | Self-learning + lifecycle follow-up (`loop_limit: 1`) |
-| `beforeShellExecution` | Soft TDD reminder on commit/publish |
-| `subagentStop` | Future: Implementer→QA handoff nudge |
-| `preCompact` | Future: remind caveman-compress on memory files |
-| `beforeSubmitPrompt` | Avoid for scope-routing (noisy); prefer session blurb + skills |
-
-Full agent events also include: `sessionEnd`, `preToolUse`, `postToolUse`, `subagentStart`, `afterShellExecution`, `beforeMCPExecution`, `afterMCPExecution`, `beforeReadFile`, `afterAgentResponse`, `afterAgentThought`, Tab events.
+- `scope-intake` — entrypoint router
+- `self-learning` — post-impl capture
+- `document-lifecycle` — status / close / orphans + Implementer Completion
+- `plan-and-critique` — medium clear scope
+- `testing-patterns` — TDD gate content
+- `caveman-compress` — optional preCompact / memory hygiene
 
 ## Add a hook
-
-Follow Cursor create-hook skill:
 
 1. Pick narrow event
 2. Edit `.cursor/hooks.json`
 3. Add script under `.cursor/hooks/`
-4. Prefer Python here (Windows-friendly): `python .cursor/hooks/….py`
-5. Fail open unless safety-critical (`failClosed: true`)
+4. Prefer Python (Windows-friendly)
+5. Fail open unless safety-critical
 6. Check Hooks tab / output channel
-
-## Skills tied to hooks
-
-- `self-learning` — post-impl capture
-- `document-lifecycle` — status / close / orphans + Implementer Completion checklist
-- `scope-intake` — early Planner+Critic merge (fuzzy scope)
-- `plan-and-critique` — medium clear scope; one-pass plan+stress-test
-- `testing-patterns` — TDD gate content
-- `caveman-compress` — optional preCompact / memory hygiene (agent-applied; no Claude CLI)

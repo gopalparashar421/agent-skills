@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
-  "version": "0.1.0",
-  "description": "Custom agents and Agent Skills — multi-agent planning lifecycle, engineering standards, and caveman token-saving skills.",
+  "version": "0.2.0",
+  "description": "Agent Skills — scope-intake entrypoint, planning lifecycle (planner/critic/implementer), addyosmani-style interview/idea/review skills, and caveman token savers.",
   "author": {
     "name": "gopalparashar421"
   },

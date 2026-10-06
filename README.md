@@ -1,127 +1,139 @@
 # agent-skills
 
-Installable **custom agents** + **Agent Skills** for Cursor, Claude Code, GitHub Copilot, Windsurf.
+Installable **Agent Skills** for Cursor, Claude Code, GitHub Copilot, Windsurf, and any client that supports the [Agent Skills spec](https://agentskills.io/specification).
 
-Repo: [gopalparashar421/agent-skills](https://github.com/gopalparashar421/agent-skills). Skills follow [Agent Skills spec](https://agentskills.io/specification).
+Repo: [gopalparashar421/agent-skills](https://github.com/gopalparashar421/agent-skills).
 
-Docs / layout patterns inspired by [addyosmani/agent-skills docs](https://github.com/addyosmani/agent-skills/tree/main/docs).
+Merges two methodologies:
 
-## Agents vs skills
+1. **Personal lifecycle skills** — planner / critic / implementer / roadmap / qa / architect + `document-lifecycle`
+2. **addyosmani-style skills** — `interview-me`, `idea-refine`, `code-review-and-quality`, `code-simplification`, `context-engineering`, `performance-optimization`
 
-| Layer | Role | UI |
-|-------|------|----|
-| `agents/` | Personas (Planner, Critic, Implementer, …) + handoffs | Cursor / Copilot agent picker |
-| `skills/` | Reusable workflows (standards, caveman, lifecycle, …) | Auto / slash when description matches |
+Personas used to live under `agents/` (Cursor/Copilot agent picker only). They are now **skills** so `npx skills add` installs the full workflow.
 
-Keep both. Agents load skills by name. Claude Code = skills-first. Do not duplicate personas into skills.
+## Entrypoint
+
+**Start with `scope-intake`.** It routes by clarity and size:
+
+```
+scope-intake
+  ├─ underspecified?     → interview-me → confirmed intent
+  ├─ wide solution space? → suggest idea-refine (optional)
+  └─ size route
+        tiny    → edit + test
+        small   → planner → implementer → user review/commit
+        medium  → [analysis-methodology if unknowns]
+                  → plan-and-critique → implementer → user review/commit
+        large   → roadmap → planner → critic → implementer
+                  → qa / code-review-and-quality → user review/commit
+```
+
+After impl: `self-learning` (Cursor stop hook may auto-run) + `document-lifecycle` status updates. User owns review/commit and doc closure. Never auto-edit `skills/caveman*`.
+
+### Scope cheatsheet (personal habits + addyosmani)
+
+| Scope | Flow |
+|-------|------|
+| Smaller | `planner` → `implementer` → manual review/commit |
+| Medium | `analysis-methodology` (if needed) → `plan-and-critique` → `implementer` → manual review/commit |
+| Larger | `roadmap` → `planner` → `critic` → `implementer` → manual review/commit |
+
+Upstream of all three when needed: `interview-me` → (optional `idea-refine`) → planning skill. Confirmed intent from `interview-me` is the input to `plan-and-critique` / `planner`.
 
 ## Install
-
-### Fast path — `npx skills` (any agent)
 
 ```bash
 npx skills add gopalparashar421/agent-skills --list
 npx skills add gopalparashar421/agent-skills
-npx skills add gopalparashar421/agent-skills --skill caveman-compress
+npx skills add gopalparashar421/agent-skills --skill scope-intake
 npx skills add gopalparashar421/agent-skills --skill self-learning --skill document-lifecycle
 ```
 
-CLI: [vercel-labs/skills](https://github.com/vercel-labs/skills). Discovers `skills/*/SKILL.md`. Use `--skill <name>` for one skill; omit for interactive/all.
-
-### Python installer (agents + skills, multi-tool)
-
-Requires Python 3.9+.
-
-```bash
-git clone https://github.com/gopalparashar421/agent-skills.git
-cd agent-skills
-python scripts/install.py
-```
-
-```bash
-python scripts/install.py --tools cursor,claude --project -y
-python scripts/install.py --tools cursor --skills caveman,testing-patterns --agents planner,critic -y
-python scripts/install.py --list
-```
-
-| Flag | Meaning |
-|------|---------|
-| `--tools` | `cursor`, `claude`, `copilot`, `windsurf`, or `all` |
-| `--project` / `--global` | Install scope |
-| `--skills` / `--agents` | Names or `all` |
-| `--force` / `-y` | Overwrite / skip confirm |
-
-**Skills land in:** Cursor `.cursor/skills/`, Claude `.claude/skills/`, Copilot `.github/skills/`, Windsurf `.windsurf/skills/` (project or `~/…` global).
-
-**Agents:** Copilot keeps `*.agent.md`; Cursor/Claude strip to `*.md`.
+CLI: [vercel-labs/skills](https://github.com/vercel-labs/skills). Discovers `skills/*/SKILL.md`.
 
 ### Project hooks (Cursor)
 
-This repo ships `.cursor/hooks.json` + scripts. After clone/open in Cursor, hooks load for **this** project. Copy `.cursor/hooks*` into your app repo if you want the same self-learning / lifecycle follow-ups there.
+This repo ships `.cursor/hooks.json` + scripts. After clone/open in Cursor, hooks load for **this** project. Copy `.cursor/hooks*` into an app repo to reuse self-learning / lifecycle follow-ups.
 
 See [docs/hooks-methodology.md](docs/hooks-methodology.md).
 
 ## Catalog
 
-### Agents
-
-| Agent | Role |
-|-------|------|
-| `analyst` | Code-level research |
-| `architect` | Architecture / debt |
-| `code-reviewer` | Pre-QA quality review |
-| `critic` | Stress-test plans |
-| `devops` | Release / deploy readiness |
-| `implementer` | Execute approved plans |
-| `pi` | Process improvement |
-| `planner` | Feature planning |
-| `qa` | Test verification |
-| `retrospective` | Lessons after impl |
-| `roadmap` | Outcome roadmap |
-| `security` | Security audit |
-| `uat` | Business-value UAT |
-
-### Skills
+### Entrypoint & orchestration
 
 | Skill | Role |
 |-------|------|
-| `analysis-methodology` | Confidence + gap tracking |
-| `architecture-patterns` | ADRs / patterns |
+| `scope-intake` | **Entrypoint** — clarity gate + size router |
+| `interview-me` | One-question-at-a-time intent extraction |
+| `idea-refine` | Divergent/convergent ideation before planning |
+| `plan-and-critique` | One-pass plan + stress-test (medium) |
+| `document-lifecycle` | IDs, status, close, impl-complete updates |
+| `self-learning` | Post-impl → AGENTS/README/skills (never caveman*) |
+
+### Persona skills (ex-agents/)
+
+| Skill | Role |
+|-------|------|
+| `roadmap` | Outcome roadmap + release tracker + orphan sweep |
+| `planner` | Impl-ready plans in `agent-output/planning/` |
+| `critic` | Pre-impl plan stress-test → `agent-output/critiques/` |
+| `implementer` | TDD-first execution → `agent-output/implementation/` |
+| `qa` | Test strategy + execution → `agent-output/qa/` |
+| `architect` | System architecture / ADRs / debt |
+
+### Shared engineering
+
+| Skill | Role |
+|-------|------|
+| `analysis-methodology` | Confidence + gap tracking (medium unknowns) |
+| `architecture-patterns` | ADRs / anti-patterns / diagrams |
+| `engineering-standards` | SOLID / DRY / YAGNI / KISS |
+| `testing-patterns` | TDD / pyramid / anti-patterns |
+| `release-procedures` | Semver + version consistency (user-driven release) |
+| `code-review-and-quality` | Post-impl multi-axis review (replaces code-reviewer agent) |
+| `code-simplification` | Clarity refactors without behavior change |
+| `context-engineering` | Session/context setup |
+| `performance-optimization` | FE/BE/query performance |
+
+### Caveman (token savers)
+
+| Skill | Role |
+|-------|------|
 | `caveman` | Terse talk (~75% fewer response tokens) |
 | `caveman-commit` | Terse Conventional Commits |
 | `caveman-compress` | Compress memory files (agent-applied; no Claude CLI) |
 | `caveman-review` | One-line PR comments |
-| `code-review-checklist` | Pre/post impl review |
-| `code-review-standards` | Severity + templates |
-| `document-lifecycle` | IDs, status, close, impl-complete updates |
-| `engineering-standards` | SOLID / DRY / YAGNI / KISS |
-| `plan-and-critique` | One-pass plan + stress-test (medium scope) |
-| `release-procedures` | Semver / ship checks |
-| `scope-intake` | Pre-plan Planner+Critic filter |
-| `self-learning` | Post-impl → AGENTS/README/skills (never caveman*) |
-| `testing-patterns` | TDD / pyramid / anti-patterns |
+
+## Consolidation notes
+
+| Removed / merged | Why |
+|------------------|-----|
+| `agents/` personas | Converted to persona skills above (`npx skills` compatible) |
+| `code-review-standards` | Orphaned with deleted code-reviewer; covered by `code-review-and-quality` |
+| `code-review-checklist` | Pre-impl checklist merged into `critic`; post-impl covered by `code-review-and-quality` |
+| analyst / devops / uat / security / pi / retrospective agents | Deleted earlier; unused. Analysis → `analysis-methodology`; release/close → user + `release-procedures` / `document-lifecycle`; review → `code-review-and-quality` |
+
+Common skills (`document-lifecycle`, `engineering-standards`, `testing-patterns`, …) stay shared — persona skills load them instead of duplicating.
 
 ## Layout
 
 ```
 agent-skills/
-├── agents/              # *.agent.md personas
-├── skills/              # SKILL.md modules (+ optional scripts/references)
-├── scripts/install.py   # Multi-tool installer
-├── .cursor/hooks.json   # Cursor hooks (self-learning, TDD nudge, …)
+├── skills/                 # SKILL.md modules (+ optional scripts/references)
+├── .cursor/hooks.json      # Cursor hooks (self-learning, TDD nudge, …)
 ├── docs/hooks-methodology.md
-├── plugin.json          # Claude plugin metadata
-└── .claude-plugin/      # Marketplace metadata
+├── plugin.json             # Claude plugin metadata
+└── .claude-plugin/         # Marketplace metadata
 ```
 
 ## Hooks methodology (short)
 
-- `sessionStart` → scope-route blurb
+- `sessionStart` → entrypoint / scope-route blurb
 - `afterFileEdit` on `agent-output/implementation/**` → marker
 - `stop` → `self-learning` + lifecycle touch (`loop_limit: 1`)
 - `beforeShellExecution` → soft TDD reminder
 
-Token savers: `scope-intake` / `plan-and-critique` / keep full Planner↔Critic for big epics only.
+Token savers: `scope-intake` / `plan-and-critique` / keep full `planner`→`critic` for big epics only.
 
 ## Caveman note
 
