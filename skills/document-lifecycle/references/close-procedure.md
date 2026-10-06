@@ -36,7 +36,7 @@ Status: Committed    # ← Updated to terminal status
 Add closure entry to doc changelog table:
 
 ```markdown
-| YYYY-MM-DD | [Your Agent Name] | Document closed | Status: Committed |
+| YYYY-MM-DD | [Skill or user] | Document closed | Status: Committed |
 ```
 
 ### Step 3: Create Closed Folder (If Needed)
@@ -64,21 +64,21 @@ Report in response:
 
 ---
 
-## Bulk Closure (DevOps After Commit)
+## Bulk closure (after user commit)
 
-When committing plan, close all related docs:
+When the user commits a plan's changes, close all related docs for that chain ID:
 
 ```bash
 # For each document type in the chain
-for domain in planning implementation qa uat; do
+for domain in planning implementation qa critiques; do
   mkdir -p agent-output/$domain/closed/
   # Update Status to "Committed" in each doc, then move
-  mv agent-output/$domain/080-*.md agent-output/$domain/closed/
+  mv agent-output/$domain/080-*.md agent-output/$domain/closed/ 2>/dev/null || true
 done
 ```
 
 Report:
-> Closed documents for Plan 080: planning, implementation, qa, uat → moved to respective `closed/` folders.
+> Closed documents for Plan 080: planning, implementation, qa, critiques → moved to respective `closed/` folders.
 
 ---
 

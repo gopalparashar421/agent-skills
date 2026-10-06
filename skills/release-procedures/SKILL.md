@@ -9,37 +9,27 @@ metadata:
 
 # Release Procedures
 
-Package + release software. Use when:
-- DevOps prepares release for deployment
-- Implementer updates version files during milestones
-- Planner specifies version bumps in plans
+Version + release guidance for persona skills. Use when:
+- `implementer` updates version files during plan milestones
+- `planner` / `plan-and-critique` specify version bumps
+- User prepares a release after manual review/commit
+- `roadmap` tracks release→plan mappings
 
-## Release Workflow
+## Release workflow (user-driven)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Two-Stage Release Flow                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  STAGE 1: Per-Plan (repeat for each plan in release)            │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │  1. QA Complete                                         │    │
-│  │  2. UAT Approved                                        │    │
-│  │  3. DevOps commits locally (NO PUSH)                    │    │
-│  │  4. Update plan status: "Committed for vX.Y.Z"          │    │
-│  │  5. Notify Roadmap of commit                            │    │
-│  └─────────────────────────────────────────────────────────┘    │
-│                                                                 │
-│  STAGE 2: Per-Release (once all plans committed)                │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │  1. All plans for release committed                     │    │
-│  │  2. User approves release                               │    │
-│  │  3. Git tag, push, publish                              │    │
-│  │  4. Update all plan statuses: "Released"                │    │
-│  │  5. Hand off to Retrospective                           │    │
-│  └─────────────────────────────────────────────────────────┘    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+STAGE 1: Per-plan
+  1. QA Complete (qa skill) and/or code-review-and-quality
+  2. User manual review
+  3. User commits locally (optionally no push yet)
+  4. document-lifecycle → Status Committed + close chain docs
+  5. roadmap: update Active Release Tracker
+
+STAGE 2: Per-release (once plans for version are committed)
+  1. User approves release
+  2. Git tag, push, publish
+  3. document-lifecycle → Status Released on included plans
+  4. roadmap: mark release done; bump working release
 ```
 
 ---
@@ -185,8 +175,9 @@ All notable changes to this project will be documented in this file.
 
 | Check | Command/Action | Fail Response |
 |-------|----------------|---------------|
-| UAT Status | Read `agent-output/uat/` | STOP if not "APPROVED FOR RELEASE" |
-| QA Status | Read `agent-output/qa/` | STOP if not "QA Complete" |
+| User review | Explicit user ack to ship | STOP |
+| QA Status | Read `agent-output/qa/` when present | STOP if `QA Failed` |
+| Code review | `code-review-and-quality` when used | STOP if REJECTED |
 | Version Match | Compare all version files | STOP and fix |
 | Tests Pass | Run test suite | STOP and fix |
 | Clean Workspace | `git status` | Commit or stash |
@@ -235,33 +226,27 @@ git push origin v1.2.3
 
 ---
 
-## Agent Responsibilities
+## Skill responsibilities
 
-### DevOps Agent (Two-Stage Release)
-- **Stage 1 (Per-Plan)**: After UAT approval, commit locally w/ detailed message. Do NOT push.
-- **Stage 2 (Per-Release)**: After all plans committed + user approves, push and publish.
-- Track which plans committed for current release
-- Coordinate w/ Roadmap agent → maintain release→plan mappings
-- Never push without explicit release approval
-- Document in `agent-output/deployment/`
+### User (manual review / commit / release)
+- Review + commit per plan; push/tag/publish only with explicit release intent
+- Trigger `document-lifecycle` close (`Committed` / `Released`)
+- Never push a release without conscious approval
 
-### Implementer Agent
-- Update `package.json` version during milestones
-- Update `CHANGELOG.md` with changes
-- Commit version updates as part of implementation
+### `implementer`
+- Update version files + CHANGELOG during plan milestones
 - Follow plan's specified version bump
 
-### Planner Agent
+### `planner` / `plan-and-critique`
 - Specify target release version in plan header
 - Multiple plans may share same target release
-- Coordinate w/ Roadmap agent for release assignments
+- Coordinate with `roadmap` for assignments
 - Include version update in final milestone
 
-### Roadmap Agent
-- Maintain Active Release Tracker section
-- Track current working release version
-- Monitor plan→release mappings
-- Notify when all plans for release committed
+### `roadmap`
+- Maintain Active Release Tracker
+- Track current working release + plan→release mappings
+- Notify when all plans for a release are committed
 
 ---
 

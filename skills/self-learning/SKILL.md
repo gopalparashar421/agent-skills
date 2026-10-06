@@ -23,7 +23,7 @@ After impl done: distill clear, reusable guidance into project instruction files
 |---------|------|
 | Hook `stop` follow-up | Marker set after edits under `agent-output/implementation/` then agent completes |
 | Manual | User: `/self-learning`, "capture learnings", "update skills from impl" |
-| Agent handoff | Implementer / parent agent after successful impl before QA handoff |
+| Skill handoff | `implementer` / parent after successful impl before QA/review |
 
 **Best available auto signal:** Cursor cannot perfectly detect "Implementer done". Repo uses: `afterFileEdit` on `agent-output/implementation/**` → write marker → `stop` hook (status completed, loop_count 0) → follow-up message that runs this skill. Manual fallback always valid.
 

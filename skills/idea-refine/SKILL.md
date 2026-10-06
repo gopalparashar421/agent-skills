@@ -7,6 +7,17 @@ description: Refines raw ideas into sharp, actionable concepts through structure
 
 Refines raw ideas into sharp, actionable concepts worth building through structured divergent and convergent thinking.
 
+## Skill hooks
+
+| When | Next |
+|------|------|
+| Upstream intent fuzzy | `interview-me` first (usually via `scope-intake`) |
+| Upstream entrypoint | `scope-intake` suggests this when solution space is wide |
+| Direction confirmed | `plan-and-critique` (medium) or `planner` (small/large) |
+| Still too vague to ideate | back to `interview-me` |
+
+Do **not** start implementation from this skill. Planning consumes the one-pager / recommended direction.
+
 ## How It Works
 
 1.  **Understand & Expand (Divergent):** Restate the idea, ask sharpening questions, and generate variations.

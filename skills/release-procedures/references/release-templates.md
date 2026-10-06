@@ -9,7 +9,7 @@ Use in `agent-output/deployment/[version].md`:
 
 **Plan Reference**: `agent-output/planning/[plan-name].md`
 **Release Date**: [YYYY-MM-DD]
-**Deployed By**: DevOps Agent
+**Deployed By**: User (manual release)
 
 ## Release Summary
 
@@ -23,8 +23,9 @@ Use in `agent-output/deployment/[version].md`:
 ## Pre-Release Verification
 
 ### Approval Status
-- [ ] QA Status: [QA Complete / QA Failed]
-- [ ] UAT Status: [APPROVED FOR RELEASE / NOT APPROVED]
+- [ ] QA Status: [QA Complete / QA Failed / N/A]
+- [ ] Code review: [APPROVED / N/A]
+- [ ] User review: [Approved to ship]
 
 ### Version Consistency
 | File | Expected | Actual | Status |

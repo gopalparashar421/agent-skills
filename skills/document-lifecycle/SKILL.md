@@ -3,181 +3,140 @@ name: document-lifecycle
 description: >
   Unified document lifecycle. Terminal statuses, numbering via .next-id, close procedures,
   orphan detection, and Implementer-completion status/changelog updates for agent-output/.
-  Load at session start or when impl finishes / close procedure needed.
+  Load at session start or when impl finishes / close procedure needed. Used by all persona skills.
 license: MIT
 metadata:
   author: groupzer0
-  version: "1.1"
+  version: "2.0"
 ---
 
-# Document Lifecycle Skill
+# Document Lifecycle
 
-Manage doc state transitions, unified numbering, automated closure across all agent-output dirs.
+Manage doc state transitions, unified numbering, closure across all `agent-output/` dirs.
 
----
-
-## Core Principle
-
-Every work chain shares one ID. Analyst creates analysis 080 → downstream plan, impl, QA, UAT, critique all use ID 080. Enables human traceability across lifecycle.
-
-Docs in terminal status belong in `closed/` subfolders. Active work stays visible; completed work archived but accessible.
+**All persona skills** (`planner`, `critic`, `implementer`, `qa`, `architect`, `roadmap`, plus `plan-and-critique` / `scope-intake` when writing files) load this skill. Addyosmani-style skills (`interview-me`, `idea-refine`, `code-review-and-quality`, …) use it whenever they touch `agent-output/`.
 
 ---
 
-## Terminal Statuses
+## Core principle
 
-These statuses trigger closure (move to `closed/`):
+Every work chain shares one ID. Originating skill mints analysis/plan `080` → downstream plan, critique, impl, QA all use ID `080`.
 
-| Status | Meaning | Closed By |
+Docs in terminal status belong in `closed/` subfolders.
+
+---
+
+## Terminal statuses
+
+| Status | Meaning | Closed by |
 |--------|---------|-----------|
-| `Committed` | Changes committed to git (awaiting release) | DevOps |
-| `Released` | Successfully pushed/published | DevOps |
-| `Abandoned` | Explicitly dropped, will not proceed | User (manual) |
-| `Deferred` | Postponed indefinitely | User (manual) |
-| `Superseded` | Replaced by a newer document | User (manual) |
-| `Resolved` | All findings addressed (critiques only) | Critic |
+| `Committed` | Changes committed to git (awaiting release) | User (manual review/commit) |
+| `Released` | Successfully pushed/published | User |
+| `Abandoned` | Explicitly dropped | User |
+| `Deferred` | Postponed indefinitely | User |
+| `Superseded` | Replaced by a newer document | User |
+| `Resolved` | All findings addressed (critiques only) | `critic` skill |
 
 ---
 
-## Unified Numbering Protocol
+## Unified numbering
 
-### The `.next-id` File
-
-Location: `agent-output/.next-id`
-
-Contents: Single integer (e.g., `081`)
+Location: `agent-output/.next-id` — single integer.
 
 **Rules:**
-- Only **originating agents** (Analyst, Planner when no analysis) read + increment
-- Downstream agents **inherit** ID from source doc
-- Never skip numbers; always use next available
+- Only **originating** skills (`analysis-methodology` when writing analysis, or `planner` / `plan-and-critique` when no analysis) read + increment
+- Downstream skills **inherit** ID from source doc
+- Never skip numbers
 
-### Document Header Format
-
-Every doc in `agent-output/` MUST include:
+### Document header
 
 ```yaml
 ---
-ID: 080                    # Global sequence number
-Origin: 080                # Chain origin (same as ID for originating docs)
-UUID: a3f7c2b1             # 8-char random hex for collision-proofing
-Status: Active             # Current lifecycle state
+ID: 080
+Origin: 080
+UUID: a3f7c2b1
+Status: Active
 ---
 ```
 
-### ID Assignment Rules
+### ID assignment
 
 | Scenario | Action |
 |----------|--------|
-| Analyst starts new investigation | Read `.next-id`, increment, use as ID, write back |
-| Planner creates plan from analysis | Inherit ID/Origin from analysis doc |
-| Planner creates plan from user request (no analysis) | Read `.next-id`, increment, use as ID, write back |
-| Implementer/QA/UAT/Critic work on plan | Inherit ID/Origin from plan doc |
-| Retrospective reviews plan | Inherit ID/Origin from plan doc |
+| Analysis starts new investigation | Read `.next-id`, increment, use as ID |
+| Planner / plan-and-critique from analysis | Inherit; close analysis → `Planned` |
+| Planner / plan-and-critique from user request | Read `.next-id`, increment |
+| Implementer / QA / Critic on plan | Inherit from plan |
+| Intake note with chain ID | Inherit or originate per above |
 
 ---
 
-## Implementer Completion (auto / hook)
+## Implementer completion (auto / hook)
 
-When Implementer finishes a work package (code+tests per plan), update `agent-output/` **before** QA handoff:
+When `implementer` finishes a work package (code+tests per plan), update `agent-output/` **before** QA/review:
 
-1. **Impl doc** (`agent-output/implementation/NNN-*.md`): set Status to reflect done-for-impl (e.g. `Implemented` / `Ready for QA` — not a terminal close status). Add changelog row with paths touched + date.
-2. **Plan doc** (same ID): changelog note that impl landed; Status stay non-terminal until DevOps commit/release close.
-3. **Cross-refs**: ensure plan ↔ impl links valid; no broken relative paths.
-4. **Do not** move to `closed/` on Implementer complete — closure still DevOps/`Committed`/`Released` (or user Abandoned/Deferred).
-5. **Do not** edit `agent-output/qa/` (Implementer read-only there).
-6. Hook path: edit under `agent-output/implementation/` → marker → `stop` follow-up runs `self-learning` + this checklist. Manual: "update document-lifecycle for impl NNN".
+1. **Impl doc:** Status e.g. `Implemented` / `Ready for QA` (not terminal). Changelog with paths + date.
+2. **Plan doc:** changelog note; Status stays non-terminal until user commit/release close.
+3. **Cross-refs:** plan ↔ impl links valid.
+4. **Do not** move to `closed/` on impl complete — closure on `Committed`/`Released` (or Abandoned/Deferred).
+5. **Do not** edit `agent-output/qa/` (implementer read-only).
+6. Hook: edit under `agent-output/implementation/` → marker → `stop` follow-up runs `self-learning` + this checklist.
 
-See also: `self-learning` skill (instruction/skills capture) vs this skill (status/paths/closure only).
+See also: `self-learning` (instruction/skills capture) vs this skill (status/paths/closure only).
 
 ---
 
-## Close Procedure
+## Close procedure
+
+See [references/close-procedure.md](references/close-procedure.md).
 
 When doc reaches terminal status:
 
-1. **Update Status field** to terminal status
-2. **Add changelog entry**: `| YYYY-MM-DD | [Agent] | Document closed | Status: [status] |`
-3. **Create closed folder** if needed: `mkdir -p agent-output/<domain>/closed/`
-4. **Move file**: `mv agent-output/<domain>/NNN-name.md agent-output/<domain>/closed/`
-5. **Log action**: "Closed document NNN-name.md (Status: [status])"
+1. Update Status field
+2. Add changelog entry
+3. `mkdir` domain `closed/` if needed
+4. Move file into `closed/`
+5. Log action
 
-### Cross-Reference Handling
-
-When referencing closed doc from another doc, use relative paths:
-- From active doc: `../closed/080-feature.md`
-- From closed doc to closed doc: `./080-feature.md` (same folder)
+**Bulk close after user commit:** close planning + implementation + qa (+ critiques if resolved) for the chain ID.
 
 ---
 
-## Orphan Detection
+## Orphan detection
 
-### Agent Self-Check (Every Session Start)
+### Self-check (every skill start)
 
-Before work, each agent MUST:
+Scan exclusive domain excluding `closed/`; move terminal-status orphans.
 
-1. Scan exclusive domain (e.g., `agent-output/qa/`) excluding `closed/`
-2. Identify any doc with terminal Status
-3. Move orphaned docs to `closed/`
-4. Log: "Found orphaned document [name] with Status [status], moved to closed/"
+### Roadmap sweep
 
-### Roadmap Periodic Sweep
-
-Roadmap agent runs full sweep when reviewing roadmap:
-
-1. Scan ALL `agent-output/*/` dirs (excluding `closed/`)
-2. Flag docs with terminal Status not in `closed/`
-3. Report to user
-4. Move to respective `closed/` folders
+`roadmap` skill runs full sweep across all `agent-output/*/`.
 
 ---
 
-## Agent Responsibilities
+## Skill responsibilities
 
-| Agent | Role | Closure Trigger |
+| Skill | Role | Closure trigger |
 |-------|------|-----------------|
-| Analyst | Originate IDs | Planner closes when plan created |
-| Planner | Originate or inherit | DevOps closes after commit |
-| Implementer | Inherit | DevOps closes after commit |
-| QA | Inherit | DevOps closes after commit |
-| UAT | Inherit | DevOps closes after commit |
-| Critic | Inherit | Self-closes when findings resolved |
-| DevOps | N/A | Self-closes after release |
-| Retrospective | Inherit | PI closes after processing |
-| PI | N/A | Self-closes own analysis |
-| Architect | N/A | Evergreen docs, no closure |
-| Roadmap | N/A | Orphan sweep responsibility |
-| Security | Inherit | Self-check only |
+| `analysis-methodology` | May originate IDs (analysis docs) | Planner closes when plan created |
+| `planner` / `plan-and-critique` | Originate or inherit | User closes after commit |
+| `implementer` | Inherit | User closes after commit |
+| `qa` | Inherit | User closes after commit |
+| `critic` | Inherit | Self-closes when findings resolved |
+| `architect` | Evergreen master; findings inherit | Findings follow standard close |
+| `roadmap` | Evergreen + orphan sweep | N/A |
+| `code-review-and-quality` | Optional review notes | User closes after commit |
+| User (manual) | Commit / release | Sets `Committed` / `Released` + bulk close |
 
 ---
 
-## Quick Reference
-
-### Creating a New Document (Originating)
+## Quick reference
 
 ```bash
-# Read current ID
 NEXT_ID=$(cat agent-output/.next-id)
-# Increment for next use
 echo $((NEXT_ID + 1)) > agent-output/.next-id
-# Use $NEXT_ID as your document ID
-```
+# use $NEXT_ID
 
-### Closing a Document
-
-```bash
-# Update Status in document header to terminal status
-# Add changelog entry
 mkdir -p agent-output/<domain>/closed/
 mv agent-output/<domain>/NNN-name.md agent-output/<domain>/closed/
-```
-
-### Self-Check Pattern
-
-```
-Before starting work:
-1. List agent-output/<my-domain>/*.md (excluding closed/)
-2. For each file, check Status field
-3. If Status in [Committed, Released, Abandoned, Deferred, Superseded, Resolved]:
-   → Move to closed/
 ```

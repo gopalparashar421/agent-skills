@@ -88,13 +88,25 @@ Recommended sections:
 5. **Findings** — Factual results by Confidence Level.
 6. **Gap Tracking Table** — (see template above).
 7. **Analysis Recommendations** — Next steps *to deepen inquiry* (not solutions).
-8. **Open Questions** — Unresolved items needing user/agent input.
+8. **Open Questions** — Unresolved items needing user/skill input.
 
 ---
 
-## Handoff Protocol
+## Skill hooks
 
-Before handoff to agent or user:
+| When | Next |
+|------|------|
+| Called from | `scope-intake`, `planner`, `plan-and-critique`, `architect`, `implementer` |
+| Analysis done | `planner` or `plan-and-critique` (inherit doc ID via `document-lifecycle`) |
+| Systemic patterns | `architect` |
+
+Load `document-lifecycle` when writing `agent-output/analysis/` docs (originating ID).
+
+---
+
+## Handoff protocol
+
+Before handoff to next skill or user:
 
 1. **List resolved unknowns** — What determined + confidence level.
 2. **List remaining gaps** — Use Gap Tracking Table.
