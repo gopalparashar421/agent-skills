@@ -65,10 +65,21 @@ Status: Draft | Ready for Implementer
 Intent: [from interview-me / user]
 …
 
+# Milestone from Planner: <title>
+Intent: [from interview-me / user]
+…
+
 ## Critique (same pass)
 Flags: …
 Recommendation: Go | Revise | Stop
 Next: implementer | critic | planner | analysis-methodology
+
+# Findings from Critic: <title>
+Flags: …
+Recommendation: Go | Revise | Stop
+Next: implementer | critic | planner | analysis-methodology
+…
+
 ```
 
 ## Boundaries
